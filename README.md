@@ -2,8 +2,6 @@
 
 # MV-SDI: Multi-View Aggregated Score Distillation for Efficient Text-to-3D
 
-**Sharper, more prompt-aligned 3D assets in 2-4x fewer optimization steps -- training-free, memory-neutral, drop-in for any SDS-style pipeline.**
-
 </div>
 
 <p align="center">
@@ -27,7 +25,7 @@
 
 ---
 
-## TL;DR
+## Overview
 
 SDS-style text-to-3D (DreamFusion / VSD / SDI) estimates each optimization-step gradient from a **single** randomly sampled camera, yielding high variance, slow convergence, and view-myopic geometry. **MV-SDI** treats this as a classic Monte-Carlo variance-reduction problem: it aggregates score-distillation gradients from **K cameras per step**, optionally drawn as **antithetic pairs** (negatively correlated views 180 degrees apart on 1/2/3 orthogonal great circles). Gradient accumulation keeps peak memory and the **total UNet budget fixed**, so using K views means **K x fewer optimization steps**.
 
@@ -199,39 +197,8 @@ python scripts/make_teaser.py --prompts benchmarks/teaser_sel.txt \
 
 ---
 
-## Citation
-
-If you find this work useful, please cite the paper and the underlying frameworks:
-
-```bibtex
-@inproceedings{mvsdi,
-  title     = {Multi-View Aggregated Score Distillation for Efficient Text-to-3D},
-  author    = {Anonymous},
-  booktitle = {Under review},
-  year      = {2026}
-}
-```
-
 > This is an anonymized release for review. Author, affiliation, and venue
 > details are intentionally omitted and will be added in the camera-ready.
-
-This project builds directly on **threestudio** and on **SDI** (Score Distillation via Inversion):
-
-```bibtex
-@misc{threestudio2023,
-  title  = {threestudio: A unified framework for 3D content generation},
-  author = {Guo, Yuan-Chen and Liu, Ying-Tian and Shao, Ruizhi and Laforte, Christian and Voleti, Vikram and Luo, Guan and Chen, Chia-Hao and Zou, Zi-Xin and Wang, Chen and Cao, Yan-Pei and Zhang, Song-Hai},
-  year   = {2023},
-  howpublished = {\url{https://github.com/threestudio-project/threestudio}}
-}
-
-@inproceedings{lukoianov2024sdi,
-  title     = {Score Distillation via Reparametrized DDIM},
-  author    = {Lukoianov, Artem and others},
-  booktitle = {NeurIPS},
-  year      = {2024}
-}
-```
 
 ---
 
