@@ -12,6 +12,19 @@
 
 <p align="center"><em>MV-SDI (K=2 antithetic) results rendered as RGB and surface normals across orbit views. Multi-view consistency and high-frequency detail come from smarter <strong>sampling</strong> alone, with the standard Stable Diffusion 2.1 prior frozen.</em></p>
 
+<p align="center"><strong>Surface-normal turntables (MV-SDI K=2 antithetic).</strong> The geometry below is recovered from a frozen 2D prior &mdash; no 3D supervision, no fine-tuning.</p>
+
+<table>
+  <tr>
+    <td align="center" width="16%"><img src="assets/gifs/normal_lion.gif" width="100%" alt="ceramic lion surface normals"/><br/><sub>ceramic lion</sub></td>
+    <td align="center" width="16%"><img src="assets/gifs/normal_marble_mouse.gif" width="100%" alt="marble bust of a mouse surface normals"/><br/><sub>marble mouse bust</sub></td>
+    <td align="center" width="16%"><img src="assets/gifs/normal_baby_dragon.gif" width="100%" alt="baby dragon hatching surface normals"/><br/><sub>baby dragon</sub></td>
+    <td align="center" width="16%"><img src="assets/gifs/normal_tower_bridge.gif" width="100%" alt="gingerbread Tower Bridge surface normals"/><br/><sub>gingerbread bridge</sub></td>
+    <td align="center" width="16%"><img src="assets/gifs/normal_sea_turtle.gif" width="100%" alt="sea turtle surface normals"/><br/><sub>sea turtle</sub></td>
+    <td align="center" width="16%"><img src="assets/gifs/normal_viking_panda.gif" width="100%" alt="Viking panda with an axe surface normals"/><br/><sub>viking panda</sub></td>
+  </tr>
+</table>
+
 ---
 
 ## TL;DR
