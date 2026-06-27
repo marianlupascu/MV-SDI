@@ -50,9 +50,7 @@ On the **exact 43-prompt benchmark released with SDI** (Lukoianov et al., NeurIP
 
 ## Qualitative comparison videos
 
-360 degree turntables, **baseline SDI (left)** vs. **MV-SDI K=2 antithetic (right)** -- both at a matched 10K-UNet-call budget (baseline 10K steps, ours 5K). RGB panel shown.
-
-> GitHub does not autoplay relative-path videos in the README; **click each clip to play**. Source MP4s live in [`assets/videos/`](assets/videos/).
+360 degree turntables, **baseline SDI (left)** vs. **MV-SDI K=2 antithetic (right)** -- both at a matched 10K-UNet-call budget (baseline 10K steps, ours 5K). RGB panel shown. Source MP4s live in [`assets/videos/`](assets/videos/).
 
 <table>
   <tr>
