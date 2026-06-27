@@ -61,22 +61,32 @@ On the **exact 43-prompt benchmark released with SDI** (Lukoianov et al., NeurIP
 
 ## Qualitative comparison videos
 
-360 degree turntables, **baseline SDI (left)** vs. **MV-SDI K=2 antithetic (right)** -- both at a matched 10K-UNet-call budget (baseline 10K steps, ours 5K). RGB panel shown. Full-quality MP4s live in [`assets/videos/`](assets/videos/).
+360 degree turntables, background removed. Each tile shows three panels: **baseline SDI (RGB)** | **MV-SDI K=2 antithetic (RGB)** | **MV-SDI K=2 antithetic (surface normals)** -- baseline and ours at a matched 10K-UNet-call budget (baseline 10K steps, ours 5K).
 
 <table>
   <tr>
-    <td align="center" width="33%"><img src="assets/gifs/hamburger.gif" width="100%" alt="hamburger: baseline SDI vs MV-SDI K=2 antithetic"/><br/><sub>"A DSLR photograph of a hamburger"</sub></td>
-    <td align="center" width="33%"><img src="assets/gifs/ceramic_lion.gif" width="100%" alt="ceramic lion: baseline SDI vs MV-SDI K=2 antithetic"/><br/><sub>"A ceramic lion"</sub></td>
-    <td align="center" width="33%"><img src="assets/gifs/blue_tulip.gif" width="100%" alt="blue tulip: baseline SDI vs MV-SDI K=2 antithetic"/><br/><sub>"A blue tulip"</sub></td>
+    <td align="center"><img src="assets/gifs/cmp_hamburger.gif" width="100%" alt="hamburger: baseline RGB | ours RGB | ours normals"/><br/><sub>"A DSLR photograph of a hamburger"</sub></td>
+    <td align="center"><img src="assets/gifs/cmp_ceramic_lion.gif" width="100%" alt="ceramic lion: baseline RGB | ours RGB | ours normals"/><br/><sub>"A ceramic lion"</sub></td>
   </tr>
   <tr>
-    <td align="center" width="33%"><img src="assets/gifs/sourdough_bread.gif" width="100%" alt="sourdough bread: baseline SDI vs MV-SDI K=2 antithetic"/><br/><sub>"A freshly baked round loaf of sourdough bread"</sub></td>
-    <td align="center" width="33%"><img src="assets/gifs/tarantula.gif" width="100%" alt="tarantula: baseline SDI vs MV-SDI K=2 antithetic"/><br/><sub>"A tarantula, highly detailed"</sub></td>
-    <td align="center" width="33%"><img src="assets/gifs/croissant.gif" width="100%" alt="croissant: baseline SDI vs MV-SDI K=2 antithetic"/><br/><sub>"A delicious croissant"</sub></td>
+    <td align="center"><img src="assets/gifs/cmp_blue_tulip.gif" width="100%" alt="blue tulip: baseline RGB | ours RGB | ours normals"/><br/><sub>"A blue tulip"</sub></td>
+    <td align="center"><img src="assets/gifs/cmp_sourdough_bread.gif" width="100%" alt="sourdough bread: baseline RGB | ours RGB | ours normals"/><br/><sub>"A freshly baked round loaf of sourdough bread"</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="assets/gifs/cmp_tarantula.gif" width="100%" alt="tarantula: baseline RGB | ours RGB | ours normals"/><br/><sub>"A tarantula, highly detailed"</sub></td>
+    <td align="center"><img src="assets/gifs/cmp_croissant.gif" width="100%" alt="croissant: baseline RGB | ours RGB | ours normals"/><br/><sub>"A delicious croissant"</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="assets/gifs/cmp_sea_turtle.gif" width="100%" alt="sea turtle: baseline RGB | ours RGB | ours normals"/><br/><sub>"A sea turtle"</sub></td>
+    <td align="center"><img src="assets/gifs/cmp_baby_dragon.gif" width="100%" alt="baby dragon: baseline RGB | ours RGB | ours normals"/><br/><sub>"Baby dragon hatching out of a stone egg"</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="assets/gifs/cmp_plush_dragon.gif" width="100%" alt="plush dragon: baseline RGB | ours RGB | ours normals"/><br/><sub>"A plush dragon toy"</sub></td>
+    <td align="center"></td>
   </tr>
 </table>
 
-<sub>Each tile: <strong>left</strong> = baseline SDI, <strong>right</strong> = MV-SDI K=2 antithetic. Animated previews are downsampled GIFs; see <code>assets/videos/</code> for full-resolution MP4s.</sub>
+<sub>Per tile, left&rarr;right: <strong>baseline SDI RGB</strong>, <strong>MV-SDI K=2 antithetic RGB</strong>, <strong>MV-SDI K=2 antithetic normals</strong>. Background matted out via the rendered silhouette. Animated previews are downsampled GIFs.</sub>
 
 Additional figures: [`assets/figures/qualitative.png`](assets/figures/qualitative.png) (baseline vs. K=2 antithetic, front + side) and [`assets/figures/sdi_qual_main.png`](assets/figures/sdi_qual_main.png) (RGB + surface normals across orbit views for baseline / K=2 / K=4).
 
