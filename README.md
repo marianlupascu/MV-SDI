@@ -50,20 +50,22 @@ On the **exact 43-prompt benchmark released with SDI** (Lukoianov et al., NeurIP
 
 ## Qualitative comparison videos
 
-360 degree turntables, **baseline SDI (left)** vs. **MV-SDI K=2 antithetic (right)** -- both at a matched 10K-UNet-call budget (baseline 10K steps, ours 5K). RGB panel shown. Source MP4s live in [`assets/videos/`](assets/videos/).
+360 degree turntables, **baseline SDI (left)** vs. **MV-SDI K=2 antithetic (right)** -- both at a matched 10K-UNet-call budget (baseline 10K steps, ours 5K). RGB panel shown. Full-quality MP4s live in [`assets/videos/`](assets/videos/).
 
 <table>
   <tr>
-    <td align="center" width="33%"><video src="assets/videos/hamburger.mp4" controls width="100%"></video><br/><sub>"A DSLR photograph of a hamburger"</sub></td>
-    <td align="center" width="33%"><video src="assets/videos/ceramic_lion.mp4" controls width="100%"></video><br/><sub>"A ceramic lion"</sub></td>
-    <td align="center" width="33%"><video src="assets/videos/blue_tulip.mp4" controls width="100%"></video><br/><sub>"A blue tulip"</sub></td>
+    <td align="center" width="33%"><img src="assets/gifs/hamburger.gif" width="100%" alt="hamburger: baseline SDI vs MV-SDI K=2 antithetic"/><br/><sub>"A DSLR photograph of a hamburger"</sub></td>
+    <td align="center" width="33%"><img src="assets/gifs/ceramic_lion.gif" width="100%" alt="ceramic lion: baseline SDI vs MV-SDI K=2 antithetic"/><br/><sub>"A ceramic lion"</sub></td>
+    <td align="center" width="33%"><img src="assets/gifs/blue_tulip.gif" width="100%" alt="blue tulip: baseline SDI vs MV-SDI K=2 antithetic"/><br/><sub>"A blue tulip"</sub></td>
   </tr>
   <tr>
-    <td align="center" width="33%"><video src="assets/videos/sourdough_bread.mp4" controls width="100%"></video><br/><sub>"A freshly baked round loaf of sourdough bread"</sub></td>
-    <td align="center" width="33%"><video src="assets/videos/tarantula.mp4" controls width="100%"></video><br/><sub>"A tarantula, highly detailed"</sub></td>
-    <td align="center" width="33%"><video src="assets/videos/croissant.mp4" controls width="100%"></video><br/><sub>"A delicious croissant"</sub></td>
+    <td align="center" width="33%"><img src="assets/gifs/sourdough_bread.gif" width="100%" alt="sourdough bread: baseline SDI vs MV-SDI K=2 antithetic"/><br/><sub>"A freshly baked round loaf of sourdough bread"</sub></td>
+    <td align="center" width="33%"><img src="assets/gifs/tarantula.gif" width="100%" alt="tarantula: baseline SDI vs MV-SDI K=2 antithetic"/><br/><sub>"A tarantula, highly detailed"</sub></td>
+    <td align="center" width="33%"><img src="assets/gifs/croissant.gif" width="100%" alt="croissant: baseline SDI vs MV-SDI K=2 antithetic"/><br/><sub>"A delicious croissant"</sub></td>
   </tr>
 </table>
+
+<sub>Each tile: <strong>left</strong> = baseline SDI, <strong>right</strong> = MV-SDI K=2 antithetic. Animated previews are downsampled GIFs; see <code>assets/videos/</code> for full-resolution MP4s.</sub>
 
 Additional figures: [`assets/figures/qualitative.png`](assets/figures/qualitative.png) (baseline vs. K=2 antithetic, front + side) and [`assets/figures/sdi_qual_main.png`](assets/figures/sdi_qual_main.png) (RGB + surface normals across orbit views for baseline / K=2 / K=4).
 
