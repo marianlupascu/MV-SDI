@@ -82,7 +82,7 @@ On the **exact 43-prompt benchmark released with SDI** (Lukoianov et al., NeurIP
   </tr>
   <tr>
     <td align="center"><img src="assets/gifs/cmp_plush_dragon.gif" width="100%" alt="plush dragon: baseline RGB | ours RGB | ours normals"/><br/><sub>"A plush dragon toy"</sub></td>
-    <td align="center"></td>
+    <td align="center"><img src="assets/gifs/cmp_strawberry.gif" width="100%" alt="strawberry: baseline RGB | ours RGB | ours normals"/><br/><sub>"A ripe strawberry"</sub></td>
   </tr>
 </table>
 
