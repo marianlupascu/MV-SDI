@@ -1,16 +1,18 @@
 <div align="center">
 
-# MV-SDI: Multi-View Aggregated Score Distillation for Efficient Text-to-3D
+# Stratified Multi-View Aggregation for Score Distillation
+
+**MV-SDI** &mdash; official implementation
 
 </div>
 
 <p align="center">
-  <img src="assets/figures/teaser.png" width="100%" alt="MV-SDI teaser: RGB and surface-normal turntables of MV-SDI K=2 antithetic results"/>
+  <img src="assets/figures/teaser.png" width="100%" alt="MV-SDI teaser: RGB and surface-normal turntables of MV-SDI K=2 stratified (antithetic) results"/>
 </p>
 
-<p align="center"><em>MV-SDI (K=2 antithetic) results rendered as RGB and surface normals across orbit views. Multi-view consistency and high-frequency detail come from smarter <strong>sampling</strong> alone, with the standard Stable Diffusion 2.1 prior frozen.</em></p>
+<p align="center"><em>MV-SDI (K=2, stratified antithetic views) results rendered as RGB and surface normals across orbit views. Multi-view consistency and high-frequency detail come from how views are <strong>sampled and aggregated</strong> alone, with the standard Stable Diffusion 2.1 prior frozen.</em></p>
 
-<p align="center"><strong>Surface-normal turntables (MV-SDI K=2 antithetic).</strong> The geometry below is recovered from a frozen 2D prior &mdash; no 3D supervision, no fine-tuning.</p>
+<p align="center"><strong>Surface-normal turntables (MV-SDI K=2, stratified antithetic views).</strong> The geometry below is recovered from a frozen 2D prior &mdash; no 3D supervision, no multi-view data, no fine-tuning.</p>
 
 <table>
   <tr>
@@ -27,33 +29,35 @@
 
 ## Overview
 
-SDS-style text-to-3D (DreamFusion / VSD / SDI) estimates each optimization-step gradient from a **single** randomly sampled camera, yielding high variance, slow convergence, and view-myopic geometry. **MV-SDI** treats this as a classic Monte-Carlo variance-reduction problem: it aggregates score-distillation gradients from **K cameras per step**, optionally drawn as **antithetic pairs** (negatively correlated views 180 degrees apart on 1/2/3 orthogonal great circles). Gradient accumulation keeps peak memory and the **total UNet budget fixed**, so using K views means **K x fewer optimization steps**.
+Score distillation (DreamFusion / VSD / SDI) turns a pretrained 2D diffusion model into a 3D generator, but each optimization step estimates its gradient from a **single** randomly sampled camera. That gradient is one noisy sample of an expectation over views: it is high-variance, slow to converge, and blind to global shape consistency. Prior work improves consistency by retraining the diffusion prior on multi-view data, which makes the contribution of view sampling inseparable from the quality of the prior.
 
-On the **exact 43-prompt benchmark released with SDI** (Lukoianov et al., NeurIPS 2024), at a matched 10K-UNet-call budget, **K=2 antithetic** beats baseline SDI on every alignment / preference metric at **2x fewer steps and 0% divergence**, with a single clearly-characterized Pareto cost on CLIP IQA.
+This work **isolates the sampling axis**. **MV-SDI** keeps the 2D prior frozen and replaces the one-view estimate with a **stratified multi-view estimate**: each step aggregates score-distillation gradients from **K cameras** drawn as **antithetic antipodal pairs** (a view and its 180&deg; opposite, on 1/2/3 orthogonal great circles) instead of K independent draws. Each pair puts one view in each half of the orbit, so the K views form a stratified sample over viewpoints with balanced angular coverage &mdash; a geometric property of the sampler, independent of the prior. Gradient accumulation keeps peak memory and the **total UNet budget fixed**, so K views per step means **K x fewer optimization steps**.
+
+On the **exact 43-prompt benchmark released with SDI** (Lukoianov et al., NeurIPS 2024), at a matched 10K-UNet-call budget, **K=2 stratified (antithetic)** beats baseline SDI on every alignment / preference metric at **2x fewer steps and 0% divergence**, with a single clearly-characterized Pareto cost on CLIP IQA.
 
 ---
 
 ## Highlights
 
-- **Training-free.** No fine-tuning of the diffusion prior; works with the frozen SD 2.1 backbone.
+- **Training-free.** No fine-tuning of the diffusion prior and no multi-view data; works with the frozen SD 2.1 backbone.
+- **Stratified view sampling.** Antithetic antipodal pairs cover the orbit evenly; negatively correlated views cut gradient variance most in the early, high-variance phase of training.
 - **Memory-neutral.** Gradient accumulation across views keeps peak VRAM and total UNet compute constant.
 - **Faster.** K views means the same quality budget is reached in 10K/K optimization steps.
-- **Drop-in.** Implemented as a camera sampler + aggregation on top of [threestudio](https://github.com/threestudio-project/threestudio); plugs into any SDS-style loss.
-- **Antithetic camera sampling.** Negatively correlated view pairs cut gradient variance most in the early, high-variance phase of training.
+- **Drop-in.** Implemented as a camera sampler + aggregation on top of [threestudio](https://github.com/threestudio-project/threestudio); plugs into gradient-based score-distillation losses, including Score Distillation via Inversion (SDI).
 - **Honest evaluation.** 7 metrics over 50 rendered views per asset, plus the first numeric Janus handle, multi-axis ablations, seed-stability, a TV-regularizer pilot, and a documented negative result on FLUX.
 
 ---
 
 ## Results (43-prompt SDI benchmark, 10K-UNet-call budget)
 
-| Method | Steps | CLIP &uarr; | R-Prec &uarr; | HPSv2 &uarr; | CLIP IQA &uarr; | ImageReward &uarr; | Div% &darr; | Speedup |
-|---|---|---|---|---|---|---|---|---|
-| Baseline SDI | 10000 | 0.297 | 74.8% | 0.199 | **0.560** | -0.47 | 0.0% | 1.0x |
-| MV-SDI K=2 uniform | 5000 | **0.312** | 83.7% | 0.219 | 0.407 | -0.15 | 2.3% | 2.0x |
-| **MV-SDI K=2 antithetic** | 5000 | 0.312 | 83.8% | **0.221** | 0.431 | **-0.07** | **0.0%** | 2.0x |
-| MV-SDI K=4 antithetic | 2500 | 0.307 | **86.9%** | 0.215 | 0.407 | -0.36 | **0.0%** | 4.0x |
+| Method | Config | Steps | CLIP &uarr; | R-Prec &uarr; | HPSv2 &uarr; | CLIP IQA &uarr; | ImageReward &uarr; | Div% &darr; | Speedup |
+|---|---|---|---|---|---|---|---|---|---|
+| Baseline SDI (single view) | `sdi.yaml` | 10000 | 0.297 | 74.8% | 0.199 | **0.560** | -0.47 | 0.0% | 1.0x |
+| MV-SDI K=2, i.i.d. uniform views | `mvsd.yaml` | 5000 | **0.312** | 83.7% | 0.219 | 0.407 | -0.15 | 2.3% | 2.0x |
+| **MV-SDI K=2, stratified (antithetic)** | `mvsd-anti2.yaml` | 5000 | 0.312 | 83.8% | **0.221** | 0.431 | **-0.07** | **0.0%** | 2.0x |
+| MV-SDI K=4, stratified (antithetic) | `mvsd-anti4.yaml` | 2500 | 0.307 | **86.9%** | 0.215 | 0.407 | -0.36 | **0.0%** | 4.0x |
 
-**Headline (K=2 antithetic vs. baseline):** CLIP **+5.1%** rel. (0.297 &rarr; 0.312), R-Precision **+9.0pp** (74.8 &rarr; 83.8), HPSv2 **+11%** rel. (0.199 &rarr; 0.221), ImageReward **-0.47 &rarr; -0.07**, at **2x fewer steps** and **0.0% divergence**. The one Pareto cost is CLIP IQA (**-23%**), which we characterize and trace to the SDI prior (a TV pilot does not recover it).
+**Headline (K=2 stratified vs. baseline):** CLIP **+5.1%** rel. (0.297 &rarr; 0.312), R-Precision **+9.0pp** (74.8 &rarr; 83.8), HPSv2 **+11%** rel. (0.199 &rarr; 0.221), ImageReward **-0.47 &rarr; -0.07**, at **2x fewer steps** and **0.0% divergence**. Against K=2 i.i.d. views at the same budget, stratification keeps the alignment gains, improves CLIP IQA and ImageReward, and removes the divergences (2.3% &rarr; 0.0%). K=4 cuts steps **4x** and reaches the highest R-Precision (86.9%) while staying above the single-view baseline on every alignment metric. The one Pareto cost is CLIP IQA (**-23%**), which we characterize and trace to the SDI prior (a TV pilot does not recover it).
 
 > Notes. Speedup is a **step-count** reduction (10K/K); total UNet compute and peak memory are held constant. Our SDI reproduction reads CLIP 0.297 vs. the 33.47 (x100) reported by SDI; we claim **direction-of-effect within a shared build** (identical NeRF / optimizer / scheduler / prompts / seed / CLIP stack), not absolute parity. Running the reproduction commands below regenerates the per-config evaluation JSONs and the aggregated tables.
 
@@ -61,7 +65,7 @@ On the **exact 43-prompt benchmark released with SDI** (Lukoianov et al., NeurIP
 
 ## Qualitative comparison videos
 
-360 degree turntables, background removed. Each tile shows three panels: **baseline SDI (RGB)** | **MV-SDI K=2 antithetic (RGB)** | **MV-SDI K=2 antithetic (surface normals)** -- baseline and ours at a matched 10K-UNet-call budget (baseline 10K steps, ours 5K).
+360 degree turntables, background removed. Each tile shows three panels: **baseline SDI (RGB)** | **MV-SDI K=2 stratified (RGB)** | **MV-SDI K=2 stratified (surface normals)** -- baseline and ours at a matched 10K-UNet-call budget (baseline 10K steps, ours 5K).
 
 <table>
   <tr>
@@ -86,30 +90,30 @@ On the **exact 43-prompt benchmark released with SDI** (Lukoianov et al., NeurIP
   </tr>
 </table>
 
-<sub>Per tile, left&rarr;right: <strong>baseline SDI RGB</strong>, <strong>MV-SDI K=2 antithetic RGB</strong>, <strong>MV-SDI K=2 antithetic normals</strong>. Background matted out via the rendered silhouette. Animated previews are downsampled GIFs.</sub>
+<sub>Per tile, left&rarr;right: <strong>baseline SDI RGB</strong>, <strong>MV-SDI K=2 stratified RGB</strong>, <strong>MV-SDI K=2 stratified normals</strong>. Background matted out via the rendered silhouette. Animated previews are downsampled GIFs.</sub>
 
-Additional figures: [`assets/figures/qualitative.png`](assets/figures/qualitative.png) (baseline vs. K=2 antithetic, front + side) and [`assets/figures/sdi_qual_main.png`](assets/figures/sdi_qual_main.png) (RGB + surface normals across orbit views for baseline / K=2 / K=4).
+Additional figures: [`assets/figures/qualitative.png`](assets/figures/qualitative.png) (baseline vs. K=2 stratified, front + side) and [`assets/figures/sdi_qual_main.png`](assets/figures/sdi_qual_main.png) (RGB + surface normals across orbit views for baseline / K=2 / K=4).
 
 ---
 
 ## Method in one picture
 
 ```
-                 single-camera SDS                      MV-SDI (K views / step)
-            theta  <--  grad(view)                theta  <--  (1/K) * sum_k grad(view_k)
-              high variance, view-myopic            antithetic pairs: view & view+180 deg
-                                                     gradient accumulation: memory & UNet budget fixed
+          single-view score distillation                   stratified multi-view aggregation (MV-SDI)
+     theta  <--  grad(view),  view ~ p(view)           theta  <--  (1/K) * sum_k grad(view_k)
+     one-sample estimate of E_view[grad]               stratified views: antithetic pairs view & view+180 deg
+     high variance, view-myopic                        gradient accumulation: memory & UNet budget fixed
 ```
 
-- **K-view aggregation.** Average K per-view score-distillation gradients per optimization step.
-- **Antithetic pairs.** Draw views in negatively correlated pairs 180 degrees apart on 1/2/3 orthogonal great circles, reducing the variance of the gradient estimator.
+- **K-view aggregation.** Average K per-view score-distillation gradients per optimization step: a K-sample estimate of the expected gradient over cameras instead of a one-sample one.
+- **Stratified (antithetic) view sampling.** Draw views in negatively correlated pairs 180 degrees apart on 1/2/3 orthogonal great circles. Each pair puts one view in each half of the orbit, so the K views cover viewpoints evenly instead of clustering by chance, reducing the variance of the gradient estimator without touching the prior.
 - **Gradient accumulation.** Accumulate the K per-view gradients before the optimizer step, so peak memory and total UNet calls match the single-view baseline; K views simply means 10K/K steps.
 - **(Optional) Consensus weighting (CW-MV-SDI).** Replace uniform averaging with a single learnable sharpness scalar that reweights views by agreement with the multi-view consensus.
 
 Core implementation:
 - [`threestudio/systems/mvsd.py`](threestudio/systems/mvsd.py) -- the MV-SDI training system (K-view loop, accumulation, aggregation).
 - [`threestudio/models/guidance/stable_diffusion_sdi_guidance.py`](threestudio/models/guidance/stable_diffusion_sdi_guidance.py) -- SDI (reparametrized-DDIM) guidance.
-- [`threestudio/data/uncond.py`](threestudio/data/uncond.py) -- camera sampler with antithetic / multi-axis options.
+- [`threestudio/data/uncond.py`](threestudio/data/uncond.py) -- camera sampler with the stratified antithetic (`data.antithetic_pairs`) and multi-axis options.
 
 ---
 
@@ -143,12 +147,12 @@ python launch.py --config configs/sdi.yaml --train --gpu 0 \
   system.prompt_processor.prompt="a ceramic lion" \
   trainer.max_steps=10000
 
-# MV-SDI K=2 antithetic (5000 steps -> same UNet budget)
+# MV-SDI K=2, stratified antithetic views (5000 steps -> same UNet budget)
 python launch.py --config configs/mvsd-anti2.yaml --train --gpu 0 \
   system.prompt_processor.prompt="a ceramic lion" \
   trainer.max_steps=5000
 
-# MV-SDI K=4 antithetic (2500 steps)
+# MV-SDI K=4, stratified antithetic views (2500 steps)
 python launch.py --config configs/mvsd-anti4.yaml --train --gpu 0 \
   system.prompt_processor.prompt="a ceramic lion" \
   trainer.max_steps=2500
@@ -156,7 +160,7 @@ python launch.py --config configs/mvsd-anti4.yaml --train --gpu 0 \
 
 Renders and test views are written under `outputs/<name>/<prompt>@<timestamp>/`.
 
-Available configs include `configs/sdi.yaml` (baseline), `configs/mvsd.yaml` (K=2 uniform), `configs/mvsd-anti2.yaml` (K=2 antithetic, headline), `configs/mvsd-anti4.yaml`, `configs/mvsd-anti8.yaml`, the multi-axis ablations (`configs/mvsd-mixed4.yaml`, `configs/mvsd-octa6-*.yaml`), `configs/mvsd-anti2-cw.yaml` (consensus weighting), and `configs/mvsd-anti2-tv*.yaml` (TV-regularizer pilot).
+Available configs include `configs/sdi.yaml` (baseline), `configs/mvsd.yaml` (K=2, i.i.d. uniform views), `configs/mvsd-anti2.yaml` (K=2 stratified antithetic, headline), `configs/mvsd-anti4.yaml`, `configs/mvsd-anti8.yaml`, the multi-axis ablations (`configs/mvsd-mixed4.yaml`, `configs/mvsd-octa6-*.yaml`), `configs/mvsd-anti2-cw.yaml` (consensus weighting), and `configs/mvsd-anti2-tv*.yaml` (TV-regularizer pilot).
 
 ---
 
